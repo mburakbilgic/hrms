@@ -25,5 +25,7 @@ public class HrmsApplication {
           .apis(RequestHandlerSelectors.basePackage("mypackage.hrms"))                    
           .build();                                           
     }
-
+	
+	// TODO update that at night of 7/21 and followed 7/22
+	// mernis and system vertification needed, under the core create the utilities and command the all update-delete-verifiy operations
 }
