@@ -11,66 +11,66 @@ CREATE SCHEMA hrms_schema
 --    "name_of_column" data_type rules_of_null_or_not_null);
 
 CREATE TABLE "hrms_schema"."users"(
-	"id" int NOT NULL,
-	"email" varchar(50) NOT NULL,
-	"password" varchar(25) NOT NULL
+  "id" int GENERATED ALWAYS AS IDENTITY,
+  "email" varchar(50) NOT NULL,
+  "password" varchar(25) NOT NULL
 );
 
 CREATE TABLE "hrms_schema"."hrms_personels"(
-	"id" int NOT NULL,
-	"user_id" int NOT NULL,
-	"first_name" varchar(25) NOT NULL,
-	"last_name" varchar(25) NOT NULL,
-	"nationality_id" varchar(11) NOT NULL,
-	"birth_of_date" date NOT NULL
+  "id" int NOT NULL,
+  "user_id" int NOT NULL,
+  "first_name" varchar(25) NOT NULL,
+  "last_name" varchar(25) NOT NULL,
+  "nationality_id" varchar(11) NOT NULL,
+  "birth_of_date" date NOT NULL
 );
 
 CREATE TABLE "hrms_schema"."candidates"( 
-	"id" int NOT NULL,
-	"user_id" int NOT NULL,
-	"first_name" varchar(25) NOT NULL,
-	"last_name" varchar(25) NOT NULL,
-	"nationality_id" varchar(11) NOT NULL,
-	"birth_of_date" date NOT NULL
+  "id" int NOT NULL,
+  "user_id" int NOT NULL,
+  "first_name" varchar(25) NOT NULL,
+  "last_name" varchar(25) NOT NULL,
+  "nationality_id" varchar(11) NOT NULL,
+  "birth_of_date" date NOT NULL
 );
 
 CREATE TABLE "hrms_schema"."employers"( 
-	"id" int NOT NULL,
-	"user_id" int NOT NULL,
-	"company_name" varchar(250) NOT NULL,
-	"web_address" varchar(50) NOT NULL,
-	"phone_number" varchar(25) NOT NULL,
-	"activate_status" boolean NOT NULL
+  "id" int NOT NULL,
+  "user_id" int NOT NULL,
+  "company_name" varchar(250) NOT NULL,
+  "web_address" varchar(50) NOT NULL,
+  "phone_number" varchar(25) NOT NULL,
+  "activate_status" boolean NOT NULL
 );
 
 CREATE TABLE "hrms_schema"."job_titles"( 
-	"id" int NOT NULL,
-	"title" varchar(50) NOT NULL
+  "id" int GENERATED ALWAYS AS IDENTITY,
+  "title" varchar(50) NOT NULL
 );
 
 CREATE TABLE "hrms_schema"."activation_codes"( 
-	"id" int NOT NULL,
-	"activation_code" varchar(50) NOT NULL,
-	"is_confirmed" boolean NOT NULL,
-	"confirmed_date" date NOT NULL
+  "id" int GENERATED ALWAYS AS IDENTITY,
+  "activation_code" varchar(50) NOT NULL,
+  "is_confirmed" boolean NOT NULL,
+  "confirmed_date" date NOT NULL
 );
 
 CREATE TABLE "hrms_schema"."activation_codes_candidates"( 
-	"id" int NOT NULL,
-	"candidate_id" int NOT NULL
+  "id" int NOT NULL,
+  "candidate_id" int NOT NULL
 );
 
 CREATE TABLE "hrms_schema"."activation_codes_employers"( 
-	"id" int NOT NULL,
-	"employer_id" int NOT NULL
+  "id" int NOT NULL,
+  "employer_id" int NOT NULL
 );
 
 CREATE TABLE "hrms_schema"."activation_status_dashboard_employers"( 
-	"id" int NOT NULL,
-	"employer_id" int NOT NULL,
-	"confirmed_system_personel_id" int,
-	"is_confirmed" boolean NOT NULL,
-	"confirmed_date" date
+  "id" int NOT NULL,
+  "employer_id" int NOT NULL,
+  "confirmed_system_personel_id" int,
+  "is_confirmed" boolean NOT NULL,
+  "confirmed_date" date
 );
 
 -- KEYS (AUTO INCREMENT)
@@ -79,29 +79,17 @@ CREATE TABLE "hrms_schema"."activation_status_dashboard_employers"(
 --    INCREMENT BY 1 START WITH 1 
 --    OWNED BY "schema_name"."table"."auto_incremented_keys";
 
-CREATE SEQUENCE "hrms_schema"."users_id_seq" 
-    INCREMENT BY 1 START WITH 1 
-    OWNED BY "hrms_schema"."users"."id";
-	
 CREATE SEQUENCE "hrms_schema"."hrms_personels_id_seq" 
     INCREMENT BY 1 START WITH 1 
     OWNED BY "hrms_schema"."hrms_personels"."id";
-	
+
 CREATE SEQUENCE "hrms_schema"."candidates_id_seq" 
     INCREMENT BY 1 START WITH 1 
     OWNED BY "hrms_schema"."candidates"."id";
-	
+
 CREATE SEQUENCE "hrms_schema"."employers_id_seq" 
     INCREMENT BY 1 START WITH 1 
     OWNED BY "hrms_schema"."employers"."id";
-	
-CREATE SEQUENCE "hrms_schema"."job_titles_id_seq" 
-    INCREMENT BY 1 START WITH 1 
-    OWNED BY "hrms_schema"."job_titles"."id";
-	
-CREATE SEQUENCE "hrms_schema"."activation_codes_id_seq" 
-    INCREMENT BY 1 START WITH 1 
-    OWNED BY "hrms_schema"."activation_codes"."id";
 
 CREATE SEQUENCE "hrms_schema"."activation_status_dashboard_employers_id_seq" 
     INCREMENT BY 1 START WITH 1 
@@ -120,7 +108,7 @@ ALTER TABLE "hrms_schema"."users"
 ALTER TABLE "hrms_schema"."employers" 
     ADD CONSTRAINT "pk_employers_id" 
     PRIMARY KEY ("id");
-	
+
 ALTER TABLE "hrms_schema"."candidates" 
     ADD CONSTRAINT "pk_candidate_id" 
     PRIMARY KEY ("id");
@@ -162,7 +150,7 @@ ALTER TABLE "hrms_schema"."users"
 ALTER TABLE "hrms_schema"."candidates" 
     ADD CONSTRAINT "uc_candidates_nationality_id" 
     UNIQUE ("nationality_id");
-	
+
 ALTER TABLE "hrms_schema"."activation_codes" 
     ADD CONSTRAINT "uc_activation_codes" 
     UNIQUE ("activation_code");
@@ -207,7 +195,7 @@ ALTER TABLE "hrms_schema"."hrms_personels"
     ADD CONSTRAINT "fk_hrms_personels_users" 
     FOREIGN KEY ("user_id") 
     REFERENCES "hrms_schema"."users" ("id");
-	
+
 ALTER TABLE "hrms_schema"."employers" 
     ADD CONSTRAINT "fk_employers_users" 
     FOREIGN KEY ("user_id") 
