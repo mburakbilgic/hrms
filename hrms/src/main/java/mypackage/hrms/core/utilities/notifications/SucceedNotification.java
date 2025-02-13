@@ -1,12 +1,12 @@
 package mypackage.hrms.core.utilities.notifications;
 
-public class SuccedNotification extends Notification {
+public class SucceedNotification extends Notification {
 
-	public SuccedNotification() {
+	public SucceedNotification() {
 		super(true);
 	}
 
-	public SuccedNotification(String message) {
+	public SucceedNotification(String message) {
 		super(true, message);
 
 	}
