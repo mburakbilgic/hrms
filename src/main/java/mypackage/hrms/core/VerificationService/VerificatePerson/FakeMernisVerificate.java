@@ -3,6 +3,7 @@ package mypackage.hrms.core.VerificationService.VerificatePerson;
 import org.springframework.stereotype.Service;
 import mypackage.hrms.entities.concretes.Candidates;
 import mypackage.hrms.entities.concretes.HrmsPersonels;
+import mypackage.hrms.entities.concretes.Employers;
 
 @Service
 public class FakeMernisVerificate implements VerificatePerson {
@@ -15,5 +16,10 @@ public class FakeMernisVerificate implements VerificatePerson {
 	@Override
 	public boolean verifyHrms(HrmsPersonels hrmsPersonels) {
 		return hrmsPersonels.getNationalID() != 0 && hrmsPersonels.getFirstName() != null && hrmsPersonels.getLastName() != null;
+	}
+
+	@Override
+	public boolean verifyEmployers(Employers employers) {
+		return employers.getCompanyName() != null && employers.getWebAdress() != null && employers.getPhoneNumber() != null;
 	}
 }
