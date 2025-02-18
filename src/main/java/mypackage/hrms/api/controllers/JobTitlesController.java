@@ -2,13 +2,14 @@ package mypackage.hrms.api.controllers;
 
 import java.util.List;
 
-import mypackage.hrms.core.utilities.notifications.DataNotification;
-import mypackage.hrms.core.utilities.notifications.Notification;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import mypackage.hrms.business.abstracts.JobTitlesService;
+import mypackage.hrms.core.utilities.notifications.DataNotification;
+import mypackage.hrms.core.utilities.notifications.Notification;
 import mypackage.hrms.entities.concretes.JobTitles;
 
 @RestController

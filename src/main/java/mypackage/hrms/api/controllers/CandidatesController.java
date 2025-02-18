@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import mypackage.hrms.business.abstracts.CandidatesService;
 import mypackage.hrms.core.utilities.notifications.Notification;
 import mypackage.hrms.core.utilities.notifications.DataNotification;
-import mypackage.hrms.business.abstracts.CandidatesService;
 import mypackage.hrms.entities.concretes.Candidates;
 
 @RestController
