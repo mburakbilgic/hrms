@@ -3,7 +3,6 @@ package mypackage.hrms.business.concretes;
 import java.util.List;
 import java.util.Optional;
 
-import mypackage.hrms.entities.concretes.Candidates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +26,12 @@ public class JobTitlesManager implements JobTitlesService{
 	public DataNotification<List<JobTitles>> getAll() {
 		List<JobTitles> jobTitles = jobTitlesDao.findAll();
 		return new DataNotification<> (jobTitles, true, "Jobs retrieved successfully.");
+	}
+
+	@Override
+	public Notification add(JobTitles jobTitles) {
+		jobTitlesDao.save(jobTitles);
+		return new Notification(true);
 	}
 
 	@Override

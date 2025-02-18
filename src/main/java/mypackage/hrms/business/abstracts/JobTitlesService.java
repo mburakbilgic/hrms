@@ -8,6 +8,7 @@ import mypackage.hrms.entities.concretes.JobTitles;
 
 public interface JobTitlesService {
 	DataNotification<List<JobTitles>> getAll();
+	Notification add(JobTitles jobTitles);
 	Notification update(JobTitles jobTitles);
 	Notification delete(int id);
 

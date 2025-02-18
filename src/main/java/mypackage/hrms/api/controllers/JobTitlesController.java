@@ -28,6 +28,11 @@ public class JobTitlesController {
 		return ResponseEntity.ok(jobTitlesService.getAll());
 	}
 
+	@PostMapping("/add")
+	public Notification add(@RequestBody JobTitles jobTitles) {
+		return jobTitlesService.add(jobTitles);
+	}
+
 	@PutMapping("/update")
 	public ResponseEntity<Notification> update(@RequestBody JobTitles jobTitles) {
 		return ResponseEntity.ok(jobTitlesService.update(jobTitles));
