@@ -9,14 +9,9 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)

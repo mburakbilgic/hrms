@@ -7,18 +7,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper=true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -34,7 +31,7 @@ public class Candidates extends Users {
 	private String lastName;
 
 	@Column(name = "national_identity")
-	private Long nationalID;
+	private long nationalID;
 
 	@Column(name = "date_of_birth")
 	private LocalDateTime dateOfBirth;
