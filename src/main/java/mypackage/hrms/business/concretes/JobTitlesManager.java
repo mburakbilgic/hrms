@@ -12,7 +12,7 @@ import mypackage.hrms.entities.concretes.JobTitles;
 @Service
 public class JobTitlesManager implements JobTitlesService{
 	private JobTitlesDao jobTitlesDao;
-	
+
 	@Autowired
 	public JobTitlesManager(JobTitlesDao jobTitlesDao) {
 		super();
