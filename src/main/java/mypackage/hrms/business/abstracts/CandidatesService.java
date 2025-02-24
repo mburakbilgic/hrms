@@ -11,6 +11,7 @@ import mypackage.hrms.entities.concretes.Candidates;
 @Transactional
 public interface CandidatesService {
 	DataNotification<List<Candidates>> getAll();
+	Notification add(Candidates candidate);
 	Notification update(Candidates candidate);
 	Notification delete(int id);
 	Notification verifyCandidate(int id);

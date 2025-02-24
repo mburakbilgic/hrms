@@ -33,6 +33,20 @@ public class CandidatesManager implements CandidatesService {
 	}
 
 	@Override
+	public Notification add(Candidates candidate) {
+		if (candidate.getEmail() == null || candidate.getPassword() == null) {
+			return new Notification(false, "Email and password are required!");
+		}
+
+		// TODO:1 activation set and control for canditates
+		//  candidate.setActivateStatus(false);
+		candidatesDao.save(candidate);
+
+		return new Notification(true, "Employer added successfully.");
+
+	}
+
+	@Override
 	public Notification update(Candidates candidate) {
 		if (candidatesDao.existsById(candidate.getId())) {
 			candidatesDao.save(candidate);
