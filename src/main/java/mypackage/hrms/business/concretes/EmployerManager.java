@@ -20,7 +20,9 @@ public class EmployerManager implements EmployersService {
 	private VerificatePerson kycVerification;
 	private MailVerificateService mailVerificateService;
 
-	public EmployerManager(EmployersDao employersDao, VerificatePerson kycVerification, MailVerificateService mailVerificateService) {
+	public EmployerManager(EmployersDao employersDao,
+						   VerificatePerson kycVerification,
+						   MailVerificateService mailVerificateService) {
 		this.employersDao = employersDao;
 		this.kycVerification = kycVerification;
 		this.mailVerificateService = mailVerificateService;
@@ -34,8 +36,15 @@ public class EmployerManager implements EmployersService {
 
 	@Override
 	public Notification add(Employers employer) {
+		if (employer.getEmail() == null || employer.getPassword() == null) {
+			return new Notification(false, "Email and password are required!");
+		}
+
+		employer.setActivateStatus(false);
 		employersDao.save(employer);
-		return new Notification(true);
+
+		return new Notification(true, "Employer added successfully.");
+
 	}
 
 	@Override
