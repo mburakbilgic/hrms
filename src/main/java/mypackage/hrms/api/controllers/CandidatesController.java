@@ -29,7 +29,7 @@ public class CandidatesController {
 		return ResponseEntity.ok(candidatesService.getAll());
 	}
 
-	@PutMapping("/add")
+	@PostMapping("/add")
 	public ResponseEntity<Notification> add(@RequestBody Candidates candidate) {
 		return ResponseEntity.ok(candidatesService.add(candidate));
 	}
