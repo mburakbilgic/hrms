@@ -1,5 +1,6 @@
 package mypackage.hrms.entities.concretes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Entity
-@PrimaryKeyJoinColumn(name = "id")
+@PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
 @Table(name = "employers")
 
 public class Employers extends Users {
@@ -28,5 +29,9 @@ public class Employers extends Users {
 
 	@Column(name = "phone_number")
 	private String phoneNumber;
+
+	@JsonIgnore
+	@Column(name = "activate_status")
+	private Boolean activateStatus;
 
 }
