@@ -29,8 +29,8 @@ public class JobTitlesController {
 	}
 
 	@PostMapping("/add")
-	public Notification add(@RequestBody JobTitles jobTitles) {
-		return jobTitlesService.add(jobTitles);
+	public ResponseEntity<Notification>  add(@RequestBody JobTitles jobTitles) {
+		return ResponseEntity.ok(jobTitlesService.add(jobTitles));
 	}
 
 	@PutMapping("/update")

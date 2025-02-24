@@ -30,8 +30,8 @@ public class EmployersController {
 	}
 
 	@PostMapping("/add")
-	public Notification add(@RequestBody Employers employer) {
-		return employersService.add(employer);
+	public ResponseEntity<Notification> add(@RequestBody Employers employer) {
+		return ResponseEntity.ok(employersService.add(employer));
 	}
 
 	@PutMapping("/update")
