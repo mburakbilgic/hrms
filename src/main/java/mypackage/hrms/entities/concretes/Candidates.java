@@ -1,6 +1,6 @@
 package mypackage.hrms.entities.concretes;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,6 +32,6 @@ public class Candidates extends Users {
 	private long nationalID;
 
 	@Column(name = "date_of_birth")
-	private LocalDateTime dateOfBirth;
+	private LocalDate dateOfBirth;
 
 }
