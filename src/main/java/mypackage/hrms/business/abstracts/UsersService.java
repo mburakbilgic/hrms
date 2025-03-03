@@ -11,4 +11,5 @@ public interface UsersService {
     Notification add(Users users);
     Notification update(Users users);
     Notification delete(int id);
+    Notification verifyEmail(String email, String code);
 }

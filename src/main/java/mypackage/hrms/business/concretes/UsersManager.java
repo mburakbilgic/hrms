@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UsersManager implements UsersService {
@@ -18,7 +19,7 @@ public class UsersManager implements UsersService {
     private MailVerificateService mailVerificateService;
 
     @Autowired
-    public UsersManager(UsersDao usersDao) {
+    public UsersManager(UsersDao usersDao, MailVerificateService mailVerificateService) {
         this.usersDao = usersDao;
         this.mailVerificateService = mailVerificateService;
     }
@@ -31,8 +32,17 @@ public class UsersManager implements UsersService {
 
     @Override
     public Notification add(Users users) {
+        if (usersDao.findByEmail(users.getEmail()).isPresent()) {
+            return new Notification(false,"This email is already registered.");
+        }
+
+        users.setActivateStatus(false);
         usersDao.save(users);
-        return new Notification(true);
+
+        String verificationCode = String.valueOf(new Random().nextInt(900000) + 100000);
+        mailVerificateService.sendVerificationEmail(users.getEmail(), verificationCode);;
+
+        return new Notification(true,"User added. Verification email sent!");
     }
 
     @Override
@@ -52,6 +62,24 @@ public class UsersManager implements UsersService {
             return new Notification (true, "User deleted successfully.");
         }
         return new Notification (false, "User not found.");
+    }
+
+    @Override
+    public Notification verifyEmail(String email, String code) {
+        Optional<Users> usersOpt = usersDao.findByEmail(email);
+        if (usersOpt.isEmpty()) {
+            return new Notification(false,"User not found.");
+        }
+
+        Users users = usersOpt.get();
+        boolean isVerified = mailVerificateService.verifyEmail(email, code);
+        if (isVerified) {
+            users.setActivateStatus(true);
+            usersDao.save(users);
+            return new Notification(true,"Email verified successfully!");
+        } else {
+            return new Notification(false,"Invalid verification code!");
+        }
     }
 
 }

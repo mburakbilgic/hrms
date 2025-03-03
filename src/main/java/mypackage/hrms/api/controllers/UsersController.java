@@ -42,4 +42,9 @@ public class UsersController {
         return ResponseEntity.ok(usersService.delete(id));
     }
 
+    @PostMapping("/verify-email")
+    public ResponseEntity<Notification> verifyEmail(@RequestParam String email, @RequestParam String code) {
+        return ResponseEntity.ok(usersService.verifyEmail(email, code));
+    }
+
 }
