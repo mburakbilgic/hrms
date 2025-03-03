@@ -1,7 +1,7 @@
 package mypackage.hrms.core.VerificationService.VerificateMail;
 
 public interface MailVerificateService {
-
-	boolean isEmail(String email);
+	boolean sendVerificationEmail(String email, String code);
+	boolean verifyEmail(String email, String code);
 
 }
