@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import mypackage.hrms.core.VerificationService.VerificateDocuments.VerificateDocuments;
+import mypackage.hrms.core.VerificationService.VerificateKYC.VerificateKYC;
 import mypackage.hrms.core.VerificationService.VerificateMail.MailVerificateService;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +20,14 @@ import org.springframework.web.multipart.MultipartFile;
 public class EmployerManager implements EmployersService {
 
 	private EmployersDao employersDao;
-	private VerificateDocuments documentsVerification;
+	private VerificateKYC kycVerification;
 	private MailVerificateService mailVerificateService;
 
 	public EmployerManager(EmployersDao employersDao,
 						   MailVerificateService mailVerificateService,
-						   VerificateDocuments documentsVerification) {
+						   VerificateKYC kycVerification) {
 		this.employersDao = employersDao;
-		this.documentsVerification = documentsVerification;
+		this.kycVerification = kycVerification;
 		this.mailVerificateService = mailVerificateService;
 	}
 
@@ -98,10 +99,9 @@ public class EmployerManager implements EmployersService {
 		}
 
 		Employers employer = employerOpt.get();
-		// boolean documentValid = documentsVerification.verifyCompanyDocument(document);
-		boolean documentValid = true;
+		boolean kycResult = kycVerification.verifyEmployers(employer);
 
-		if (documentValid) {
+		if (kycResult) {
 			employer.setActivateStatusKYC(true);
 			employersDao.saveAndFlush(employer);
 			return new Notification(true,"Employer verified successfully.");
