@@ -1,5 +1,10 @@
 package mypackage.hrms.api.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import mypackage.hrms.business.abstracts.UsersService;
 import mypackage.hrms.core.utilities.notifications.DataNotification;
 import mypackage.hrms.core.utilities.notifications.Notification;
@@ -27,11 +32,6 @@ public class UsersController {
         return ResponseEntity.ok(usersService.getAll());
     }
 
-    @PostMapping("/add")
-    public Notification add(@RequestBody Users users) {
-        return usersService.add(users);
-    }
-
     @PutMapping("/update")
     public ResponseEntity<Notification> update(@RequestBody Users users) {
         return ResponseEntity.ok(usersService.update(users));
@@ -40,11 +40,6 @@ public class UsersController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Notification> delete(@PathVariable int id) {
         return ResponseEntity.ok(usersService.delete(id));
-    }
-
-    @PostMapping("/verify-email")
-    public ResponseEntity<Notification> verifyEmail(@RequestParam String email, @RequestParam String code) {
-        return ResponseEntity.ok(usersService.verifyEmail(email, code));
     }
 
 }
