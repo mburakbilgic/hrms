@@ -47,7 +47,7 @@ public class EmployerManager implements EmployersService {
 		employersDao.save(employer);
 
 		String verificationCode = String.valueOf(new Random().nextInt(900000) + 100000);
-		mailVerificateService.sendVerificationEmail(employer.getEmail(), verificationCode);;
+		mailVerificateService.sendVerificationEmail(employer.getEmail(), verificationCode);
 
 		return new Notification(true, "Employer added successfully.");
 
