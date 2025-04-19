@@ -1,4 +1,4 @@
-package mypackage.hrms.core.VerificationService.VerificatePerson;
+package mypackage.hrms.core.VerificationService.VerificateKYC;
 
 import org.springframework.stereotype.Service;
 import org.springframework.context.annotation.Primary;
@@ -8,7 +8,7 @@ import mypackage.hrms.entities.concretes.Employers;
 
 @Service
 @Primary
-public class FakeKYCVerificate implements VerificatePerson {
+public class FakeKYCVerificate implements VerificateKYC {
 
 	@Override
 	public boolean verifyCandidates(Candidates candidate) {

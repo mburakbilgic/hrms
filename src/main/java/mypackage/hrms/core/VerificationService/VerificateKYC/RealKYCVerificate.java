@@ -1,10 +1,10 @@
-package mypackage.hrms.core.VerificationService.VerificatePerson;
+package mypackage.hrms.core.VerificationService.VerificateKYC;
 
 import mypackage.hrms.entities.concretes.Candidates;
 import mypackage.hrms.entities.concretes.Employers;
 import mypackage.hrms.entities.concretes.HrmsPersonels;
 
-public class RealKYCVerificate implements VerificatePerson {
+public class RealKYCVerificate implements VerificateKYC {
 
     @Override
     public boolean verifyCandidates(Candidates candidate) {
