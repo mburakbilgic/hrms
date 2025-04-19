@@ -53,7 +53,7 @@ public class EmployersController {
 		return ResponseEntity.ok(employersService.delete(id));
 	}
 
-	@PostMapping(value="/verify/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value="/verify-kyc-employers/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "Verify KYC for an employer", description = "Uploads a document to verify KYC status for an employer")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Verification successful"),
