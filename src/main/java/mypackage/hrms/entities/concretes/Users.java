@@ -30,7 +30,12 @@ public class Users {
 	@Column(name = "password")
 	private String password;
 
-	@JsonIgnore
-	@Column(name = "activate_status")
-	private Boolean activateStatus;
+	@Column(name = "activate_status_email", nullable = false)
+	private Boolean activateStatusEmail = false;
+
+	@Column(name = "activate_status_sms", nullable = false)
+	private Boolean activateStatusSMS = false;
+
+	@Column(name = "activate_status_kyc", nullable = false)
+	private Boolean activateStatusKYC = false;
 }
