@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import mypackage.hrms.entities.concretes.Candidates;
 
-public interface CandidatesDao extends JpaRepository<Candidates, Integer> {
+import java.util.Optional;
 
+public interface CandidatesDao extends JpaRepository<Candidates, Integer> {
+    Optional<Candidates> findByEmail(String email);
 }
