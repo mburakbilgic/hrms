@@ -2,25 +2,29 @@ package mypackage.hrms.business.concretes;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
+import mypackage.hrms.core.VerificationService.VerificateMail.MailVerificateService;
 import org.springframework.stereotype.Service;
 
 import mypackage.hrms.business.abstracts.CandidatesService;
-import mypackage.hrms.core.VerificationService.VerificateMail.MailVerificateService;
-import mypackage.hrms.core.VerificationService.VerificatePerson.VerificatePerson;
+import mypackage.hrms.core.VerificationService.VerificateKYC.VerificateKYC;
 import mypackage.hrms.core.utilities.notifications.Notification;
 import mypackage.hrms.core.utilities.notifications.DataNotification;
 import mypackage.hrms.dataAccess.abstracts.CandidatesDao;
 import mypackage.hrms.entities.concretes.Candidates;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class CandidatesManager implements CandidatesService {
 
 	private CandidatesDao candidatesDao;
-	private VerificatePerson kycVerification;
+	private VerificateKYC kycVerification;
 	private MailVerificateService mailVerificateService;
 
-	public CandidatesManager(CandidatesDao candidatesDao, VerificatePerson kycVerification, MailVerificateService mailVerificateService) {
+	public CandidatesManager(CandidatesDao candidatesDao,
+							 MailVerificateService mailVerificateService,
+							 VerificateKYC kycVerification) {
 		this.candidatesDao = candidatesDao;
 		this.kycVerification = kycVerification;
 		this.mailVerificateService = mailVerificateService;
@@ -38,11 +42,13 @@ public class CandidatesManager implements CandidatesService {
 			return new Notification(false, "Email and password are required!");
 		}
 
-		// TODO:1 activation set and control for canditates
-		//  candidate.setActivateStatus(false);
+		candidate.setActivateStatusEmail(false);
 		candidatesDao.save(candidate);
 
-		return new Notification(true, "Employer added successfully.");
+		String verificationCode = String.valueOf(new Random().nextInt(900000) + 100000);
+		mailVerificateService.sendVerificationEmail(candidate.getEmail(), verificationCode);
+
+		return new Notification(true, "Candidate added successfully.");
 
 	}
 
@@ -65,8 +71,28 @@ public class CandidatesManager implements CandidatesService {
 		return new Notification (false, "Candidate not found.");
 	}
 
+
 	@Override
-	public Notification  verifyCandidate(int id) {
+	public Notification verifyEmailCandidate(String email, String code) {
+		Optional<Candidates> candidateOpt = candidatesDao.findByEmail(email);
+		if (candidateOpt.isEmpty()) {
+			return new Notification(false,"Candidate not found.");
+		}
+
+		Candidates candidates = candidateOpt.get();
+		boolean isVerified = mailVerificateService.verifyEmail(email, code);
+		if (isVerified) {
+
+			candidates.setActivateStatusEmail(true);
+			candidatesDao.saveAndFlush(candidates);
+			return new Notification(true,"Candidate verified successfully!");
+		} else {
+			return new Notification(false,"Invalid verification code!");
+		}
+	}
+
+	@Override
+	public Notification  verifyKYCCandidate(int id, MultipartFile document) {
 		Optional<Candidates> candidateOpt = candidatesDao.findById(id);
 		if (candidateOpt.isEmpty()) {
 			return new Notification (false, "Candidate not found.");
@@ -74,15 +100,13 @@ public class CandidatesManager implements CandidatesService {
 
 		Candidates candidate = candidateOpt.get();
 		boolean kycResult = kycVerification.verifyCandidates(candidate);
-		// boolean mailResult = mailVerificateService.sendVerificationEmail(candidate.getEmail());
-		boolean mailResult = true;
 
-		if (kycResult && mailResult) {
-			return new Notification (true, "Candidate verified successfully.");
-		} else if (!kycResult) {
+		if (kycResult) {
+			candidate.setActivateStatusKYC(true);
+			candidatesDao.saveAndFlush(candidate);
+			return new Notification (true, "KYC verified successfully.");
+		} else{
 			return new Notification (false, "KYC verification failed.");
-		} else {
-			return new Notification (false, "Email verification failed.");
 		}
 	}
 }
