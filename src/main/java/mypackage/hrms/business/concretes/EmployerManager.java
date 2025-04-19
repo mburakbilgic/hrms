@@ -2,29 +2,31 @@ package mypackage.hrms.business.concretes;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
+import mypackage.hrms.core.VerificationService.VerificateDocuments.VerificateDocuments;
+import mypackage.hrms.core.VerificationService.VerificateMail.MailVerificateService;
 import org.springframework.stereotype.Service;
 
 import mypackage.hrms.business.abstracts.EmployersService;
-import mypackage.hrms.core.VerificationService.VerificateMail.MailVerificateService;
-import mypackage.hrms.core.VerificationService.VerificatePerson.VerificatePerson;
 import mypackage.hrms.core.utilities.notifications.DataNotification;
 import mypackage.hrms.core.utilities.notifications.Notification;
 import mypackage.hrms.dataAccess.abstracts.EmployersDao;
 import mypackage.hrms.entities.concretes.Employers;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class EmployerManager implements EmployersService {
 
 	private EmployersDao employersDao;
-	private VerificatePerson kycVerification;
+	private VerificateDocuments documentsVerification;
 	private MailVerificateService mailVerificateService;
 
 	public EmployerManager(EmployersDao employersDao,
-						   VerificatePerson kycVerification,
-						   MailVerificateService mailVerificateService) {
+						   MailVerificateService mailVerificateService,
+						   VerificateDocuments documentsVerification) {
 		this.employersDao = employersDao;
-		this.kycVerification = kycVerification;
+		this.documentsVerification = documentsVerification;
 		this.mailVerificateService = mailVerificateService;
 	}
 
@@ -40,17 +42,20 @@ public class EmployerManager implements EmployersService {
 			return new Notification(false, "Email and password are required!");
 		}
 
-		employer.setActivateStatus(false);
+		employer.setActivateStatusEmail(false);
 		employersDao.save(employer);
+
+		String verificationCode = String.valueOf(new Random().nextInt(900000) + 100000);
+		mailVerificateService.sendVerificationEmail(employer.getEmail(), verificationCode);;
 
 		return new Notification(true, "Employer added successfully.");
 
 	}
 
 	@Override
-	public Notification update(Employers employers) {
-		if (employersDao.existsById(employers.getId())) {
-			employersDao.save(employers);
+	public Notification update(Employers employer) {
+		if (employersDao.existsById(employer.getId())) {
+			employersDao.save(employer);
 			return new Notification (true, "Employers updated successfully.");
 		}
 		return new Notification (false, "Employers not found.");
@@ -58,8 +63,8 @@ public class EmployerManager implements EmployersService {
 
 	@Override
 	public Notification delete(int id) {
-		Optional<Employers> employers = employersDao.findById(id);
-		if (employers.isPresent()) {
+		Optional<Employers> employer = employersDao.findById(id);
+		if (employer.isPresent()) {
 			employersDao.deleteById(id);
 			return new Notification (true, "Employers deleted successfully.");
 		}
@@ -67,23 +72,41 @@ public class EmployerManager implements EmployersService {
 	}
 
 	@Override
-	public Notification  verifyEmployers(int id) {
-		Optional<Employers> employersOpt = employersDao.findById(id);
-		if (employersOpt.isEmpty()) {
-			return new Notification (false, "Employers not found.");
+	public Notification verifyEmailEmployers(String email, String code) {
+		Optional<Employers> employerOpt = employersDao.findByEmail(email);
+		if (employerOpt.isEmpty()) {
+			return new Notification(false,"Employer not found.");
 		}
 
-		Employers employers = employersOpt.get();
-		boolean kycResult = kycVerification.verifyEmployers(employers);
-		// boolean mailResult = mailVerificateService.sendVerificationEmail(employers.getEmail());
-		boolean mailResult = true;
+		Employers employer = employerOpt.get();
+		boolean isVerified = mailVerificateService.verifyEmail(email, code);
+		if (isVerified) {
 
-		if (kycResult && mailResult) {
-			return new Notification (true, "Employers verified successfully.");
-		} else if (!kycResult) {
-			return new Notification (false, "KYC verification failed.");
+			employer.setActivateStatusEmail(true);
+			employersDao.saveAndFlush(employer);
+			return new Notification(true,"Employer verified successfully!");
 		} else {
-			return new Notification (false, "Email verification failed.");
+			return new Notification(false,"Invalid verification code or email!");
+		}
+	}
+
+	@Override
+	public Notification verifyKYCEmployers(int id, MultipartFile document) {
+		Optional<Employers> employerOpt = employersDao.findById(id);
+		if (employerOpt.isEmpty()) {
+			return new Notification(false,"Employer not found.");
+		}
+
+		Employers employer = employerOpt.get();
+		// boolean documentValid = documentsVerification.verifyCompanyDocument(document);
+		boolean documentValid = true;
+
+		if (documentValid) {
+			employer.setActivateStatusKYC(true);
+			employersDao.saveAndFlush(employer);
+			return new Notification(true,"Employer verified successfully.");
+		} else {
+			return new Notification(false, "Employer verification failed.");
 		}
 	}
 
