@@ -10,8 +10,7 @@ import mypackage.hrms.core.VerificationService.VerificateMail.MailVerificateServ
 import org.springframework.stereotype.Service;
 
 import mypackage.hrms.business.abstracts.EmployersService;
-import mypackage.hrms.core.utilities.notifications.DataNotification;
-import mypackage.hrms.core.utilities.notifications.Notification;
+import mypackage.hrms.core.utilities.notifications.*;
 import mypackage.hrms.dataAccess.abstracts.EmployersDao;
 import mypackage.hrms.entities.concretes.Employers;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,8 +38,12 @@ public class EmployerManager implements EmployersService {
 
 	@Override
 	public Notification add(Employers employer) {
-		if (employer.getEmail() == null || employer.getPassword() == null) {
-			return new Notification(false, "Email and password are required!");
+		if (
+				employer.getEmail() == null ||
+				employer.getPassword() == null ||
+				employersDao.findByEmail(employer.getEmail()).isPresent()
+		) {
+			return new Notification(false, "Email already exists or invalid data.");
 		}
 
 		employer.setActivateStatusEmail(false);
@@ -59,7 +62,7 @@ public class EmployerManager implements EmployersService {
 			employersDao.save(employer);
 			return new Notification (true, "Employers updated successfully.");
 		}
-		return new Notification (false, "Employers not found.");
+		return new Notification (false, "Invalid data or employer not found.");
 	}
 
 	@Override
@@ -82,10 +85,9 @@ public class EmployerManager implements EmployersService {
 		Employers employer = employerOpt.get();
 		boolean isVerified = mailVerificateService.verifyEmail(email, code);
 		if (isVerified) {
-
 			employer.setActivateStatusEmail(true);
 			employersDao.saveAndFlush(employer);
-			return new Notification(true,"Employer verified successfully!");
+			return new Notification(true,"Verification successfully!");
 		} else {
 			return new Notification(false,"Invalid verification code or email!");
 		}
@@ -104,9 +106,9 @@ public class EmployerManager implements EmployersService {
 		if (kycResult) {
 			employer.setActivateStatusKYC(true);
 			employersDao.saveAndFlush(employer);
-			return new Notification(true,"Employer verified successfully.");
+			return new Notification(true,"KYC verification successfully.");
 		} else {
-			return new Notification(false, "Employer verification failed.");
+			return new Notification(false, "Invalid request or missing file.");
 		}
 	}
 

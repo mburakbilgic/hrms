@@ -38,8 +38,12 @@ public class CandidatesManager implements CandidatesService {
 
 	@Override
 	public Notification add(Candidates candidate) {
-		if (candidate.getEmail() == null || candidate.getPassword() == null) {
-			return new Notification(false, "Email and password are required!");
+		if (
+				candidate.getEmail() == null ||
+				candidate.getPassword() == null ||
+				candidatesDao.findByEmail(candidate.getEmail()).isPresent()
+		) {
+			return new Notification(false, "Email already exists or invalid data.");
 		}
 
 		candidate.setActivateStatusEmail(false);
@@ -58,7 +62,7 @@ public class CandidatesManager implements CandidatesService {
 			candidatesDao.save(candidate);
 			return new Notification (true, "Candidate updated successfully.");
 		}
-		return new Notification (false, "Candidate not found.");
+		return new Notification (false, "Invalid data or candidate not found.");
 	}
 
 	@Override
@@ -87,7 +91,7 @@ public class CandidatesManager implements CandidatesService {
 			candidatesDao.saveAndFlush(candidates);
 			return new Notification(true,"Candidate verified successfully!");
 		} else {
-			return new Notification(false,"Invalid verification code!");
+			return new Notification(false,"Invalid verification code or email!");
 		}
 	}
 
@@ -106,7 +110,7 @@ public class CandidatesManager implements CandidatesService {
 			candidatesDao.saveAndFlush(candidate);
 			return new Notification (true, "KYC verified successfully.");
 		} else{
-			return new Notification (false, "KYC verification failed.");
+			return new Notification (false, "Invalid request or missing file.");
 		}
 	}
 }
