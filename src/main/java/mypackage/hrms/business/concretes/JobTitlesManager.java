@@ -5,16 +5,16 @@ import mypackage.hrms.core.utilities.notifications.DataNotification;
 import mypackage.hrms.core.utilities.notifications.Notification;
 import mypackage.hrms.dataAccess.abstracts.JobTitlesDao;
 import mypackage.hrms.entities.concretes.JobTitles;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class JobTitlesManager implements JobTitlesService {
+
 	private final JobTitlesDao jobTitlesDao;
 
-	@Autowired
 	public JobTitlesManager(JobTitlesDao jobTitlesDao) {
 		this.jobTitlesDao = jobTitlesDao;
 	}
@@ -22,52 +22,58 @@ public class JobTitlesManager implements JobTitlesService {
 	@Override
 	public DataNotification<List<JobTitles>> getAll() {
 		List<JobTitles> jobTitles = jobTitlesDao.findAll();
-		String message = jobTitles.isEmpty() ? "No job titles found." : "Jobs retrieved successfully.";
+		String message = jobTitles.isEmpty() ? "No job titles found." : "Job titles retrieved successfully.";
 		return new DataNotification<>(jobTitles, true, message);
 	}
 
 	@Override
-	public Notification add(JobTitles jobTitles) {
-		if (!isValidJobTitle(jobTitles)) {
-			return createErrorNotification("Job title already exists or invalid data.");
+	public Notification add(JobTitles jobTitle) {
+		if (!isValidJobTitle(jobTitle)) {
+			return createErrorNotification("Invalid data or title already exists.");
 		}
 
-		return saveJobTitle(jobTitles);
+		try {
+			jobTitlesDao.save(jobTitle);
+			return createSuccessNotification("Job title added successfully.");
+		} catch (Exception e) {
+			return createErrorNotification("Failed to add job title: " + e.getMessage());
+		}
 	}
 
 	@Override
-	public Notification update(JobTitles jobTitles) {
-		if (!jobTitlesDao.existsById(jobTitles.getId())) {
-			return createErrorNotification("Job title not found.");
+	public Notification update(JobTitles jobTitle) {
+		if (!jobTitlesDao.existsById(jobTitle.getId()) || !isValidJobTitle(jobTitle)) {
+			return createErrorNotification("Invalid data or job title not found.");
 		}
 
-		return saveJobTitle(jobTitles);
+		try {
+			jobTitlesDao.save(jobTitle);
+			return createSuccessNotification("Job title updated successfully.");
+		} catch (Exception e) {
+			return createErrorNotification("Failed to update job title: " + e.getMessage());
+		}
 	}
 
 	@Override
-	public Notification delete(int id) {
+	public Notification delete(Long id) {
 		if (!jobTitlesDao.existsById(id)) {
 			return createErrorNotification("Job title not found.");
 		}
 
-		jobTitlesDao.deleteById(id);
-		return createSuccessNotification("Job title deleted successfully.");
-	}
-
-	private Notification saveJobTitle(JobTitles jobTitles) {
 		try {
-			jobTitlesDao.save(jobTitles);
-			return createSuccessNotification("Job title " + (jobTitles.getId() == 0 ? "added" : "updated") + " successfully.");
+			jobTitlesDao.deleteById(id);
+			return createSuccessNotification("Job title deleted successfully.");
 		} catch (Exception e) {
-			return createErrorNotification("Job title already exists or invalid data.");
+			return createErrorNotification("Failed to delete job title: " + e.getMessage());
 		}
 	}
 
-	private boolean isValidJobTitle(JobTitles jobTitles) {
-		if (jobTitles == null || jobTitles.getTitle() == null) {
+	private boolean isValidJobTitle(JobTitles jobTitle) {
+		if (jobTitle == null || jobTitle.getTitle() == null || jobTitle.getTitle().isBlank()) {
 			return false;
 		}
-		return jobTitlesDao.findByTitle(jobTitles.getTitle()).isEmpty();
+		Optional<JobTitles> existingJobTitle = jobTitlesDao.findByTitle(jobTitle.getTitle());
+		return !(existingJobTitle.isPresent() && (jobTitle.getId() == null || !existingJobTitle.get().getId().equals(jobTitle.getId())));
 	}
 
 	private Notification createSuccessNotification(String message) {
