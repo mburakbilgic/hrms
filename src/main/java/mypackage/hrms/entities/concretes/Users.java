@@ -1,44 +1,59 @@
 package mypackage.hrms.entities.concretes;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Table;
-
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
-
 public class Users {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
-	private int id;
+	private Integer id;
 
-	@Column(name = "email")
+	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 
-	@Column(name = "password")
+	@Column(name = "password", nullable = false)
 	private String password;
 
-	@JsonIgnore
 	@Column(name = "activate_status_email", nullable = false)
-	private Boolean activateStatusEmail = false;
+	private boolean activateStatusEmail;
 
-	@JsonIgnore
-	@Column(name = "activate_status_sms", nullable = false)
-	private Boolean activateStatusSMS = false;
-
-	@JsonIgnore
 	@Column(name = "activate_status_kyc", nullable = false)
-	private Boolean activateStatusKYC = false;
+	private boolean activateStatusKyc;
+
+	@Column(name = "activate_status_sms", nullable = false)
+	private boolean activateStatusSms;
+
+	@Column(name = "status", nullable = false)
+	private String status;
+
+	@Column(name = "created_at", nullable = false)
+	private ZonedDateTime createdAt;
+
+	@Column(name = "updated_at", nullable = false)
+	private ZonedDateTime updatedAt;
+
+	@PrePersist
+	protected void onCreate() {
+		ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/Istanbul"));
+		this.createdAt = now;
+		this.updatedAt = now;
+		if (status == null) {
+			status = "Pending";
+		}
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		updatedAt = ZonedDateTime.now();
+	}
 }
