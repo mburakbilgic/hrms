@@ -18,9 +18,6 @@ public class Employers extends Users {
 	@Column(name = "web_address", nullable = false)
 	private String webAddress;
 
-	@Column(name = "phone_number", nullable = false)
-	private String phoneNumber;
-
 	@Column(name = "tax_number", nullable = false, unique = true)
 	private String taxNumber;
 
@@ -29,9 +26,6 @@ public class Employers extends Users {
 
 	@Column(name = "company_size")
 	private String companySize;
-
-	@Column(name = "address")
-	private String address;
 
 	@Column(name = "description")
 	private String description;
